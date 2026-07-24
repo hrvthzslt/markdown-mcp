@@ -63,4 +63,30 @@ describe("search_notes", () => {
 
     expect(text).toBe("No matching notes found.");
   });
+
+  it("returns an error result when the notes directory is unreadable", async () => {
+    const [clientTransport, serverTransport] =
+      InMemoryTransport.createLinkedPair();
+    await createServer(path.join(FIXTURES_DIR, "does-not-exist")).connect(
+      serverTransport,
+    );
+    const brokenClient = new Client({
+      name: "test-client",
+      version: "1.0.0",
+    });
+    await brokenClient.connect(clientTransport);
+
+    try {
+      const result = await brokenClient.callTool({
+        name: "search_notes",
+        arguments: { query: "apples" },
+      });
+      const content = result.content as Array<{ type: string; text: string }>;
+
+      expect(result.isError).toBe(true);
+      expect(content[0]!.text).toContain("Error searching notes:");
+    } finally {
+      await brokenClient.close();
+    }
+  });
 });
