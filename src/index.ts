@@ -1,6 +1,15 @@
 import * as fs from "fs/promises";
 import * as path from "path";
 
+function getPathFromInput(processArgv: string[]): string {
+  if (!processArgv[2] && typeof processArgv[2] !== "string") {
+    console.error("Please provide a directory path as an argument.");
+    process.exit(1);
+  }
+
+  return processArgv[2];
+}
+
 async function getMarkdownFiles(dir: string): Promise<string[]> {
   const entries = await fs.readdir(dir, { withFileTypes: true });
   const files = await Promise.all(
@@ -16,13 +25,14 @@ async function getMarkdownFiles(dir: string): Promise<string[]> {
 }
 
 async function main() {
-  if (!process.argv[2] && typeof process.argv[2] !== "string") {
-    console.error("Please provide a directory path as an argument.");
-    process.exit(1);
-  }
-  const dirPath = process.argv[2];
-  console.log(process.argv);
-  console.info(await getMarkdownFiles(dirPath));
+    const dirPath = getPathFromInput(process.argv);
+    console.info(dirPath);
+    console.info(await getMarkdownFiles(dirPath));
+
+    process.exit(0);
 }
 
-main();
+main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+});
