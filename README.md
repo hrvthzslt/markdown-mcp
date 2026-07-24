@@ -1,1 +1,1 @@
-# markdown-mcp
+# Markdown MCP
