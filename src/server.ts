@@ -1,6 +1,7 @@
+import * as path from "path";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { searchInMarkdownFiles } from "./repository.js";
+import { getFileContent, searchInMarkdownFiles } from "./repository.js";
 
 export function createServer(notesDir: string): McpServer {
   const server = new McpServer({
@@ -32,6 +33,36 @@ export function createServer(notesDir: string): McpServer {
           isError: true,
           content: [
             { type: "text", text: `Error searching notes: ${error.message}` },
+          ],
+        };
+      }
+    },
+  );
+
+  server.registerTool(
+    "read_note",
+    {
+      description:
+        "Reads the complete text content of a specific markdown note.",
+      inputSchema: {
+        relativePath: z
+          .string()
+          .describe(
+            "The relative path of the note from the vault root (e.g., 'Work/Meeting.md')",
+          ),
+      },
+    },
+    async ({ relativePath }) => {
+      try {
+        const content = await getFileContent(path.join(notesDir, relativePath));
+        return {
+          content: [{ type: "text", text: content }],
+        };
+      } catch (error: any) {
+        return {
+          isError: true,
+          content: [
+            { type: "text", text: `Error reading file: ${error.message}` },
           ],
         };
       }

@@ -6,9 +6,22 @@ import { createServer } from "../src/server.js";
 
 const FIXTURES_DIR = path.join(import.meta.dirname, "fixtures");
 
-describe("search_notes", () => {
-  let client: Client;
+let client: Client;
 
+beforeEach(async () => {
+  const [clientTransport, serverTransport] =
+    InMemoryTransport.createLinkedPair();
+  await createServer(FIXTURES_DIR).connect(serverTransport);
+
+  client = new Client({ name: "test-client", version: "1.0.0" });
+  await client.connect(clientTransport);
+});
+
+afterEach(async () => {
+  await client.close();
+});
+
+describe("search_notes", () => {
   async function searchNotes(query: string): Promise<string> {
     const result = await client.callTool({
       name: "search_notes",
@@ -17,19 +30,6 @@ describe("search_notes", () => {
     const content = result.content as Array<{ type: string; text: string }>;
     return content[0]!.text;
   }
-
-  beforeEach(async () => {
-    const [clientTransport, serverTransport] =
-      InMemoryTransport.createLinkedPair();
-    await createServer(FIXTURES_DIR).connect(serverTransport);
-
-    client = new Client({ name: "test-client", version: "1.0.0" });
-    await client.connect(clientTransport);
-  });
-
-  afterEach(async () => {
-    await client.close();
-  });
 
   it("finds notes containing the query", async () => {
     const text = await searchNotes("apples");
@@ -88,5 +88,38 @@ describe("search_notes", () => {
     } finally {
       await brokenClient.close();
     }
+  });
+});
+
+describe("read_note", () => {
+  async function readNote(relativePath: string) {
+    const result = await client.callTool({
+      name: "read_note",
+      arguments: { relativePath },
+    });
+    const content = result.content as Array<{ type: string; text: string }>;
+    return { isError: result.isError, text: content[0]!.text };
+  }
+
+  it("reads the full content of a note", async () => {
+    const { isError, text } = await readNote("groceries.md");
+
+    expect(isError).toBeUndefined();
+    expect(text).toContain("# Groceries");
+    expect(text).toContain("Buy apples and bananas.");
+  });
+
+  it("reads notes in nested directories", async () => {
+    const { isError, text } = await readNote(path.join("work", "meeting.md"));
+
+    expect(isError).toBeUndefined();
+    expect(text).toContain("roadmap");
+  });
+
+  it("returns an error result for a missing note", async () => {
+    const { isError, text } = await readNote("does-not-exist.md");
+
+    expect(isError).toBe(true);
+    expect(text).toContain("Error reading file:");
   });
 });

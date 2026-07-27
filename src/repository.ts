@@ -50,3 +50,7 @@ export async function searchInMarkdownFiles(
     ? `Found matches in:\n${matches.join("\n")}`
     : "No matching notes found.";
 }
+
+export async function getFileContent(path: string): Promise<string> {
+  return await fs.readFile(path, "utf-8");
+}
