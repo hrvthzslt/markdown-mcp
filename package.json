@@ -2,24 +2,28 @@
   "name": "markdown-mcp",
   "version": "1.0.0",
   "description": "",
-  "scripts": {
-    "inspect": "npx @modelcontextprotocol/inspector tsx src/index.ts",
-    "test": "vitest run"
-  },
+  "keywords": [],
+  "license": "ISC",
+  "author": "",
   "repository": {
     "type": "git",
     "url": "git@github.com:hrvthzslt/markdown-mcp.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "type": "module",
+  "scripts": {
+    "lint": "oxlint",
+    "fmt": "oxfmt",
+    "inspect": "npx @modelcontextprotocol/inspector tsx src/index.ts",
+    "test": "vitest run"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/node": "^26.1.1",
+    "oxfmt": "^0.61.0",
+    "oxlint": "^1.76.0",
     "tsx": "^4.23.1",
     "typescript": "^7.0.2",
     "vitest": "^4.1.10"

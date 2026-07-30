@@ -6,7 +6,9 @@ const FIXTURES_DIR = path.join(import.meta.dirname, "fixtures");
 
 describe("checkDirectoryExistence", () => {
   it("resolves for an existing directory", async () => {
-    await expect(checkDirectoryExistence(FIXTURES_DIR)).resolves.toBeUndefined();
+    await expect(
+      checkDirectoryExistence(FIXTURES_DIR),
+    ).resolves.toBeUndefined();
   });
 
   it("rejects when the path does not exist", async () => {
