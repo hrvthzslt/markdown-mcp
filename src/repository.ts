@@ -8,7 +8,7 @@ export async function checkDirectoryExistence(dir: string): Promise<void> {
     if (!stat.isDirectory()) {
       errorMessage = `${dir} is not a directory`;
     }
-  } catch (err) {
+  } catch {
     errorMessage = `${dir} does not exist`;
   }
   if (errorMessage) {
