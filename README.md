@@ -1,6 +1,6 @@
 # Markdown MCP Server
 
-An MCP Server for providing tools to search and read Markdown files recursively.
+A **Node.js** MCP Server for providing tools to search and read Markdown files recursively.
 
 ## Tools
 

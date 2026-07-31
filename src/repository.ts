@@ -39,7 +39,7 @@ export async function searchInMarkdownFiles(
   const matches: string[] = [];
 
   for (const filePath of allFiles) {
-    const content = await fs.readFile(filePath, "utf-8");
+    const content = await getFileContent(filePath);
     if (content.toLowerCase().includes(lowercaseQuery)) {
       const relativePath = path.relative(dir, filePath);
       matches.push(`- ${relativePath}`);
