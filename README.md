@@ -48,7 +48,7 @@ The command requires a path to the notes directory as a positional argument.
 Testing the tools with the inspector can be done with the following command:
 
 ```bash
-npx @modelcontextprotocol/inspector tsx src/index.ts ~/path/notes
+npm run inspect -- ~/path/notes
 ```
 
 Also, running tests with:
