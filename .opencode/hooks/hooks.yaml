@@ -1,0 +1,7 @@
+hooks:
+  - event: file.changed
+    conditions: [matchesCodeFiles]
+    actions:
+      - bash: "npx tsc --noEmit"
+      - bash: "npm run lint"
+      - bash: "npm test"
